@@ -25,6 +25,8 @@ The user's input arrives as the skill arguments. Parse it:
 **If input contains `--tech`:**
 → Set MODE = TECHNICAL
 → Set QUESTION = everything after `--tech` in the input
+→ If QUESTION is empty after `--tech`, ask the user: "What technical aspect would you like the council to analyze?"
+→ Stop here until they respond.
 
 **Otherwise:**
 → Set MODE = UNIVERSAL
@@ -34,7 +36,7 @@ If QUESTION is empty after parsing, ask the user: "What would you like the counc
 
 ## Step 2: Load personas
 
-Use the Read tool to read the persona file. The file paths are relative to the plugin root (parent directory of this `skills/` folder):
+Use the Read tool to read the persona file. To find the plugin root: use the Glob tool to find `personas/universal.json` matching pattern `**/personas/universal.json` within the current working directory, or construct the path by taking the directory of this skill file and going up two levels (from `skills/council/SKILL.md` → up to `skills/` → up to plugin root). The personas files are at `personas/universal.json` and `personas/technical.json` within that root.
 
 - If MODE = UNIVERSAL → read `personas/universal.json`
 - If MODE = TECHNICAL → read `personas/technical.json`
@@ -55,6 +57,8 @@ Parse the JSON content to get the array of persona objects. Each has: `id`, `nam
 ## Step 4: Launch parallel agents
 
 **CRITICAL: All expert Agent() calls MUST be launched in a single message as simultaneous parallel tool calls. Do not launch them one by one.**
+
+**How to ensure parallelism:** First, build the COMPLETE list of all agent prompts (one per selected persona). Then, in a SINGLE response, emit all Agent() tool calls simultaneously — do not call the Agent tool one at a time in a loop.
 
 For each selected persona, construct this prompt:
 
