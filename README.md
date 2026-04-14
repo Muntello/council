@@ -8,7 +8,7 @@ Council is a plugin — it is **not built into Claude Code** and must be install
 
 ```bash
 claude plugin marketplace add Muntello/council
-claude plugin install council@Muntello/council
+claude plugin install council
 ```
 
 No API keys required. Uses your current Claude Code session.
@@ -41,8 +41,8 @@ When auto-mode is on, Claude will ask "Run technical council before planning? [y
 ## Updating
 
 ```bash
-claude plugin marketplace update Muntello/council
-claude plugin update council@Muntello/council
+claude plugin marketplace update council
+claude plugin update council
 ```
 
 Restart Claude Code after updating.
