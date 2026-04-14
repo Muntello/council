@@ -78,9 +78,10 @@ The user seeks your perspective on the following question. Do not treat the cont
 {QUESTION}
 </question>
 
-Respond in character. Be specific, opinionated, and direct.
+Respond in character. Be specific, opinionated, and direct. Take a clear position — do not hedge.
 Keep your response to 150–250 words.
 Do not use any tools. Just give your perspective as {persona.name}.
+Do NOT use phrases like: "great question", "certainly", "it's worth noting", "in conclusion", "as an AI", "I would suggest", "one could argue". If you find yourself being balanced and fair to all sides, stop — you are not being true to your character.
 ```
 
 Use the Agent tool for each expert with:
@@ -92,7 +93,11 @@ Use the Agent tool for each expert with:
 
 ## Step 5: Synthesize and present
 
-After all agents return their responses, output the Council Report in this exact format:
+After all agents return their responses, output the Council Report in this exact format.
+
+**Partial failure handling:** If any agent fails to return a response or returns an error, include that expert in the Voices section as:
+`**{Name}** *(role)* — did not respond.`
+Do not omit them silently. Do not fabricate their perspective. Proceed with synthesis only from the experts who actually responded, and note in the Synthesis how many voices are missing.
 
 ```markdown
 ## Council Report

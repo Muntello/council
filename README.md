@@ -54,6 +54,58 @@ claude plugin install --local /path/to/council
 
 Restart Claude Code after updating.
 
+## Example
+
+Running `council --tech` on this very repository:
+
+```
+council --tech analyze the technical solution of the council plugin itself
+```
+
+**Output:**
+
+> Launching 6 experts in parallel: Security Skeptic, AppSec Engineer, Performance Engineer, Pragmatic Architect, User Advocate, Operations Voice...
+
+---
+
+## Council Report
+
+**Topic:** Technical solution of the Council Claude Code plugin
+**Experts convened:** Security Skeptic, AppSec Engineer, Performance Engineer, Pragmatic Architect, User Advocate, Operations Voice
+
+---
+
+### Voices
+
+**Security Skeptic** *(Threat Modeler)*
+Prompt injection is the primary attack surface. The `<question>` XML wrapping is advisory, not enforced. Supply chain is the installation threat — the plugin installs from GitHub with no pinned commit hash, no checksum, no signature. Persona files are trusted implicitly: `prompt` fields are injected into agent instructions without sanitization. Prioritize: pin installs to a specific commit SHA, validate persona JSON against a schema before injection.
+
+**Performance Engineer** *(Performance & Scalability)*
+Six simultaneous Agent() calls with no per-agent timeout. If one agent hangs, the entire synthesis step waits indefinitely. Persona selection (4–6 by topic matching) is implemented ad hoc by the LLM at runtime — non-deterministic and untestable. **Priority fix:** add per-agent timeout and define explicit behavior on partial failure — synthesize from whoever responded within N seconds.
+
+**Pragmatic Architect** *(Systems Architect)*
+The pre-PlanMode hook is the riskiest seam — if Anthropic changes Agent() behavior, auto-mode breaks silently. The persona selection logic lives inside LLM instructions and is not auditable. Parallel auto-mode calls accumulate cost with no circuit breaker. Good call on JSON as pure data. Bad call on the unauditable selection criterion.
+
+**Operations Voice** *(SRE / DevOps)*
+The synthesis step has no defined behavior when an agent times out — the orchestrator will improvise silently. Observability is zero. The update path is a manual footgun: `git pull` with no version pin ships breaking changes to all users immediately. Priority: (1) named fallback for failed agents, (2) session-level success indicator, (3) pin installs to a git tag.
+
+---
+
+### Points of Disagreement
+
+- **Security Skeptic vs Pragmatic Architect** — structural isolation of user input (technical barriers) vs. managing internal complexity first. Both valid depending on whether this is a public or personal tool.
+- **User Advocate vs Operations Voice** — User Advocate wants auto-mode default changed to `Y` for more engagement; Operations Voice wants a circuit breaker for fewer surprise invocations. Direct contradiction.
+
+### Synthesis
+
+The architecture is clean — JSON as pure data, skills as logic, parallelism via Agent() — but three systemic gaps need attention. First: no partial-failure handling means the entire synthesis hangs on a single slow agent. Second: supply chain trust without verification — persona files are injected as trusted content with no integrity check. Third: the persona selection criterion exists only inside a prompt, making it untestable and non-deterministic.
+
+### Recommendation
+
+Add explicit fallback in the skill: when an agent fails, name it in the report — do not synthesize from silence. Pin the installation to a git tag instead of HEAD for safe rollback.
+
+---
+
 ## How it works
 
 1. Claude selects the most relevant expert personas for your question
