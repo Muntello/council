@@ -26,7 +26,26 @@ rsync -av \
   . "$CACHE_DIR/"
 
 echo ""
-echo "Done. Run /reload-plugins in Claude Code to activate."
+
+# Auto-update the plugin registry if the version changed.
+REGISTRY="$HOME/.claude/plugins/installed_plugins.json"
+if [[ -f "$REGISTRY" ]]; then
+  REGISTERED_VERSION=$(python3 -c "
+import json, pathlib
+data = json.loads(pathlib.Path('$REGISTRY').read_text())
+entry = data['plugins'].get('council@council', [{}])[0]
+print(entry.get('version', ''))
+" 2>/dev/null || echo "")
+  if [[ "$REGISTERED_VERSION" != "$VERSION" ]]; then
+    echo "Version changed ($REGISTERED_VERSION → $VERSION) — updating plugin registry..."
+    python3 scripts/bump-registry.py
+    echo "⚠ Restart Claude Code to activate v$VERSION (not just /reload-plugins)."
+  else
+    echo "Done. Run /reload-plugins in Claude Code to activate."
+  fi
+else
+  echo "Done. Run /reload-plugins in Claude Code to activate."
+fi
 echo ""
 
 if [[ "${1:-}" == "--verify" ]]; then
