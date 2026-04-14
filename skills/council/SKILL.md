@@ -1,6 +1,6 @@
 ---
 name: council
-description: Convene a council of expert AI personas to analyze any question in parallel. Usage: council <question> | council --auto on|off | council --tech <question>
+description: "Convene a council of expert AI personas to analyze any question in parallel. Usage: council <question> | council --auto on|off | council --tech <question>"
 user_invocable: true
 ---
 

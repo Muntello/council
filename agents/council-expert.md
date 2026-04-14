@@ -1,3 +1,8 @@
+---
+name: council-expert
+description: Documentation template for the prompt used when constructing each parallel council expert agent
+---
+
 # Council Expert Agent Template
 
 This template is used by `skills/council/SKILL.md` when constructing each parallel agent.
