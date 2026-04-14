@@ -1,6 +1,6 @@
 ---
 name: council
-description: "Convene a council of expert AI personas to analyze any question in parallel. Usage: council <question> | council --auto on|off | council --tech <question>"
+description: "Convene a council of expert AI personas to analyze any question in parallel. Usage: council <question> | council --auto on|off | council --tech <question> | council --verify"
 user_invocable: true
 ---
 
@@ -28,18 +28,55 @@ The user's input arrives as the skill arguments. Parse it:
 → If QUESTION is empty after `--tech`, ask the user: "What technical aspect would you like the council to analyze?"
 → Stop here until they respond.
 
+**If input contains `--verify`:**
+→ Set MODE = VERIFY
+→ Proceed to Step 2.
+
 **Otherwise:**
 → Set MODE = UNIVERSAL
 → Set QUESTION = the full input
 
 If QUESTION is empty after parsing, ask the user: "What would you like the council to analyze?"
 
-## Step 2: Load personas
+## Step 2: Load and verify personas
 
-Use the Read tool to read the persona file. To find the plugin root: use the Glob tool to find `personas/universal.json` matching pattern `**/personas/universal.json` within the current working directory, or construct the path by taking the directory of this skill file and going up two levels (from `skills/council/SKILL.md` → up to `skills/` → up to plugin root). The personas files are at `personas/universal.json` and `personas/technical.json` within that root.
+Find the plugin root: use Glob on `**/personas/checksums.json`, or construct the path from the skill base directory going up two levels (from `skills/council/SKILL.md` → `skills/` → plugin root).
 
-- If MODE = UNIVERSAL → read `personas/universal.json`
-- If MODE = TECHNICAL → read `personas/technical.json`
+**Integrity check — run for ALL modes:**
+
+1. Read `{plugin_root}/personas/checksums.json`. If missing, output `⚠ council: checksums.json not found — skipping integrity check.` and continue.
+2. Determine which files to check:
+   - MODE = VERIFY → both `universal.json` and `technical.json`
+   - MODE = TECHNICAL → `technical.json` only
+   - MODE = UNIVERSAL → `universal.json` only
+3. For each file, run via Bash: `shasum -a 256 "{plugin_root}/personas/{filename}"` and extract the 64-char hash (first field of output).
+4. Compare against the value in `checksums.json`:
+   - Match → continue
+   - Mismatch → output the following and **STOP**:
+     ```
+     ⚠ council: integrity check FAILED for personas/{filename}
+       expected: {expected_hash}
+       got:      {actual_hash}
+     The plugin cache may have been tampered with.
+     Reinstall: claude plugin update council
+     ```
+
+**If MODE = VERIFY:**
+After checking all files, output:
+```
+Council integrity check — v{version from checksums.json}
+
+✓ personas/universal.json   {hash[:16]}...
+✓ personas/technical.json   {hash[:16]}...
+
+All checks passed. Plugin cache matches committed manifest.
+```
+Use ✗ and the mismatch details for any failed file.
+Stop here. Do not proceed further.
+
+**Load personas (for non-VERIFY modes):**
+- If MODE = UNIVERSAL → read `{plugin_root}/personas/universal.json`
+- If MODE = TECHNICAL → read `{plugin_root}/personas/technical.json`
 
 Parse the JSON content to get the array of persona objects. Each has: `id`, `name`, `role`, `prompt` (and `topics` for universal personas).
 

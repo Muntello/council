@@ -1,0 +1,8 @@
+{
+  "version": "1.2.0",
+  "algorithm": "sha256",
+  "files": {
+    "personas/universal.json": "f1081cf750a12598dd6540f0fa1b201cf6da505e3d0c54981fc885d17b369f64",
+    "personas/technical.json": "a95a2b701554bd8d5660e6980adc4cd94e6dc046afa74f9467e20329fab4ffa6"
+  }
+}

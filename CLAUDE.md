@@ -14,8 +14,12 @@ Core mechanic: skill reads persona JSON → launches parallel Agent() calls → 
 personas/
   universal.json     # 12 universal advisors (Claude selects 4–6 per query)
   technical.json     # 6 technical voices (all run in --tech and auto-mode)
+  checksums.json     # SHA-256 manifest — regenerate with scripts/update-checksums.sh
+scripts/
+  deploy.sh          # deploy to plugin cache (reads version from plugin.json automatically)
+  update-checksums.sh  # regenerate checksums.json after editing persona files
 skills/
-  council/SKILL.md        # main orchestration: parse → load → select → agents → synthesize
+  council/SKILL.md        # main orchestration: parse → load → verify → select → agents → synthesize
   council-auto/SKILL.md   # pre-PlanMode hook (auto-mode)
 agents/
   council-expert.md  # documentation only — not invoked directly
@@ -25,17 +29,28 @@ PERSONAS.md          # guide for adding or editing personas
 ## Development workflow
 
 Changes to this working directory do **not** auto-reflect in the running plugin.
-After editing, sync to the plugin cache and reload:
+After editing, deploy with the script (handles version path automatically):
 
 ```bash
-rsync -av --exclude='.git' --exclude='.remember' . ~/.claude/plugins/cache/council/council/1.2.0/
+./scripts/deploy.sh
 # then in Claude Code:
 /reload-plugins
 ```
 
-Or reinstall cleanly:
+To deploy and verify integrity in one step:
+```bash
+./scripts/deploy.sh --verify
+```
+
+Or reinstall cleanly from the marketplace:
 ```bash
 claude plugin update council && /reload-plugins
+```
+
+If you edited persona files, regenerate checksums before deploying:
+```bash
+./scripts/update-checksums.sh
+# (deploy.sh calls this automatically)
 ```
 
 ## Release process
@@ -84,9 +99,9 @@ This plugin runs in a personal, single-user Claude Code environment. The threat 
 **Blast radius if persona files are compromised** (e.g. via a malicious process writing to the plugin cache):
 An attacker controls the system prompt injected into all parallel subagents. They could redirect agent output or attempt to use tools if the "no tools" constraint is bypassed.
 
-**Mitigations in place:** XML wrapping of user input, explicit "Do not use any tools" constraint per agent, named partial failure reporting.
+**Mitigations in place:** XML wrapping of user input, explicit "Do not use any tools" constraint per agent, named partial failure reporting, SHA-256 integrity check on persona files at load time (`council --verify` to check manually).
 
-**Not mitigated (by design, single-user scope):** cryptographic verification of plugin artifacts, integrity hashing of persona files. Revisit if this plugin is ever deployed in a multi-user or shared environment.
+**Not mitigated (by design, single-user scope):** cryptographic verification of plugin artifacts (the checksums.json itself is not signed). Revisit if this plugin is ever deployed in a multi-user or shared environment — at that point, sign the manifest with a key not stored in the cache.
 
 ## Personas
 
