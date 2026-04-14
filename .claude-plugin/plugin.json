@@ -9,10 +9,5 @@
   "homepage": "https://github.com/Muntello/council",
   "repository": "https://github.com/Muntello/council",
   "license": "MIT",
-  "keywords": ["council", "personas", "parallel", "experts", "analysis"],
-  "skills": [
-    "./skills/council",
-    "./skills/council-auto"
-  ],
-  "agents": "./agents"
+  "keywords": ["council", "personas", "parallel", "experts", "analysis"]
 }
