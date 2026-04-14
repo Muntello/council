@@ -59,8 +59,13 @@ If you edited persona files, regenerate checksums before deploying:
 2. Bump `version` in `.claude-plugin/marketplace.json` **and** `.claude-plugin/plugin.json`
    - The report template in SKILL.md reads version from `checksums.json` automatically — no manual edit needed there
 3. Run `./scripts/deploy.sh` — this regenerates `checksums.json` with the new version, updates the pinned hash in SKILL.md, and syncs the cache
-4. Run `/reload-plugins` in Claude Code
-5. Create a git tag: `git tag v1.x.x && git push --tags`
+4. Update the plugin registry to point at the new version path:
+   ```bash
+   python3 scripts/bump-registry.py
+   ```
+   (or edit `~/.claude/plugins/installed_plugins.json` manually: update `installPath`, `version`, `gitCommitSha` for `council@council`)
+5. **Fully restart Claude Code** — `/reload-plugins` alone does NOT switch versions; it only reloads content from the already-registered path
+6. Create a git tag: `git tag v1.x.x && git push --tags`
 6. Users update with:
    ```bash
    claude plugin marketplace update council
