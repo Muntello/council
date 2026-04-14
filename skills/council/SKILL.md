@@ -60,10 +60,11 @@ Parse the JSON content to get the array of persona objects. Each has: `id`, `nam
 
 **How to ensure parallelism:** First, build the COMPLETE list of all agent prompts (one per selected persona). Then, in a SINGLE response, emit all Agent() tool calls simultaneously — do not call the Agent tool one at a time in a loop.
 
-Before launching the agents, output this line to the user (fill in actual values):
+Before launching the agents, output these two lines to the user (fill in actual values):
 
 ```
 Launching {N} experts in parallel: {comma-separated persona names}...
+Processing... (this may take 30–60 seconds)
 ```
 
 For each selected persona, construct this prompt:
@@ -104,6 +105,7 @@ Do not omit them silently. Do not fabricate their perspective. Proceed with synt
 
 **Topic:** {one-line summary of QUESTION}
 **Experts convened:** {comma-separated list of persona names}
+**Plugin version:** council v1.2.0
 
 ### Recommendation
 

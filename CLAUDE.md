@@ -28,7 +28,7 @@ Changes to this working directory do **not** auto-reflect in the running plugin.
 After editing, sync to the plugin cache and reload:
 
 ```bash
-rsync -av --exclude='.git' --exclude='.remember' . ~/.claude/plugins/cache/council/council/1.0.0/
+rsync -av --exclude='.git' --exclude='.remember' . ~/.claude/plugins/cache/council/council/1.2.0/
 # then in Claude Code:
 /reload-plugins
 ```
@@ -51,6 +51,10 @@ claude plugin update council && /reload-plugins
 
 **Never ship a breaking change without bumping the version.** Users have no other signal.
 
+After each release, verify:
+- [ ] `council --tech <simple question>` produces a full report
+- [ ] Auto-mode hook fires correctly before Plan Mode (test after any Claude Code update — this is the only framework coupling point that breaks silently)
+
 ## Rollback
 
 If an update breaks things:
@@ -59,7 +63,7 @@ If an update breaks things:
 git log --oneline --tags
 
 # roll back the cache manually
-git -C ~/.claude/plugins/cache/council/council/1.0.0 checkout v1.0.0
+git -C ~/.claude/plugins/cache/council/council/1.2.0 checkout v1.1.0
 /reload-plugins
 ```
 
@@ -68,6 +72,21 @@ git -C ~/.claude/plugins/cache/council/council/1.0.0 checkout v1.0.0
 `SKILL.md` files are executable instructions — treat them with the same care as source code.
 Changes to persona selection logic, report format, or agent prompts have direct UX impact.
 Test by running `council` or `council --tech` after every non-trivial change.
+
+## Threat model
+
+This plugin runs in a personal, single-user Claude Code environment. The threat model reflects that.
+
+**Trusted:** skill files (SKILL.md), persona JSON files, the Claude Code runtime itself.
+
+**Untrusted:** user input passed via `council <question>`. It is wrapped in `<question>` XML tags before being injected into agent prompts. Do not remove this wrapping.
+
+**Blast radius if persona files are compromised** (e.g. via a malicious process writing to the plugin cache):
+An attacker controls the system prompt injected into all parallel subagents. They could redirect agent output or attempt to use tools if the "no tools" constraint is bypassed.
+
+**Mitigations in place:** XML wrapping of user input, explicit "Do not use any tools" constraint per agent, named partial failure reporting.
+
+**Not mitigated (by design, single-user scope):** cryptographic verification of plugin artifacts, integrity hashing of persona files. Revisit if this plugin is ever deployed in a multi-user or shared environment.
 
 ## Personas
 
