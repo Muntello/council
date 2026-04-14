@@ -47,6 +47,13 @@ claude plugin update council
 
 Restart Claude Code after updating.
 
+If an update breaks something, roll back:
+
+```bash
+git -C ~/.claude/plugins/cache/council/council/1.0.0 checkout v1.0.0
+# then /reload-plugins in Claude Code
+```
+
 ## Example
 
 Running `council --tech` on this very repository:

@@ -20,7 +20,7 @@ Check memory for key `council_auto_mode` **before invoking EnterPlanMode**.
 **Step 1: Ask the user**
 
 Before entering Plan Mode, ask:
-> "**Technical council available** — run expert review before planning? [y/N]"
+> "**Technical council available** — run expert review before planning? [Y/n]"
 
 Wait for the user's response.
 

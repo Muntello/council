@@ -1,6 +1,6 @@
 {
   "name": "council",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Assemble a council of AI expert personas to analyze any question in parallel",
   "author": {
     "name": "Muntello",

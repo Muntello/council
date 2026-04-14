@@ -105,6 +105,10 @@ Do not omit them silently. Do not fabricate their perspective. Proceed with synt
 **Topic:** {one-line summary of QUESTION}
 **Experts convened:** {comma-separated list of persona names}
 
+### Recommendation
+
+{1–2 actionable sentences. Be direct. Name a specific choice if possible.}
+
 ---
 
 ### Voices
@@ -126,8 +130,4 @@ Do not omit them silently. Do not fabricate their perspective. Proceed with synt
 ### Synthesis
 
 {3–5 sentences integrating the key insights. Do not merely summarize — find what holds across perspectives and what the tensions reveal.}
-
-### Recommendation
-
-{1–2 actionable sentences. Be direct. Name a specific choice if possible.}
 ```
