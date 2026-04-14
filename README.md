@@ -7,7 +7,8 @@ Assemble a council of expert AI personas to analyze any question or decision. Ea
 Council is a plugin — it is **not built into Claude Code** and must be installed manually.
 
 ```bash
-git clone https://github.com/Muntello/council ~/.claude/plugins/council
+claude plugin marketplace add Muntello/council
+claude plugin install council@Muntello/council
 ```
 
 No API keys required. Uses your current Claude Code session.
@@ -39,17 +40,9 @@ When auto-mode is on, Claude will ask "Run technical council before planning? [y
 
 ## Updating
 
-**If installed from GitHub** — pull the latest and reinstall:
-
 ```bash
-cd /path/to/council && git pull
-claude plugin install --local .
-```
-
-**If installed locally during development** — reinstall from source:
-
-```bash
-claude plugin install --local /path/to/council
+claude plugin marketplace update Muntello/council
+claude plugin update council@Muntello/council
 ```
 
 Restart Claude Code after updating.

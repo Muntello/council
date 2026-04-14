@@ -1,0 +1,20 @@
+{
+  "name": "council",
+  "description": "Assemble a council of expert AI personas to analyze any question in parallel",
+  "owner": {
+    "name": "Muntello",
+    "url": "https://github.com/Muntello"
+  },
+  "plugins": [
+    {
+      "name": "council",
+      "description": "Assemble a council of expert AI personas to analyze any question in parallel",
+      "version": "1.0.0",
+      "source": "./",
+      "author": {
+        "name": "Muntello",
+        "url": "https://github.com/Muntello"
+      }
+    }
+  ]
+}
