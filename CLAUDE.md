@@ -16,8 +16,9 @@ personas/
   technical.json     # 6 technical voices (all run in --tech and auto-mode)
   checksums.json     # SHA-256 manifest — regenerate with scripts/update-checksums.sh
 scripts/
-  deploy.sh          # deploy to plugin cache (reads version from plugin.json automatically)
+  deploy.sh            # deploy to plugin cache (reads version from plugin.json automatically)
   update-checksums.sh  # regenerate checksums.json after editing persona files
+  bump-registry.py     # update installed_plugins.json after a version bump (required before restart)
 skills/
   council/SKILL.md        # main orchestration: parse → load → verify → select → agents → synthesize
   council-auto/SKILL.md   # pre-PlanMode hook (auto-mode)
@@ -29,29 +30,32 @@ PERSONAS.md          # guide for adding or editing personas
 ## Development workflow
 
 Changes to this working directory do **not** auto-reflect in the running plugin.
-After editing, deploy with the script (handles version path automatically):
+
+### Patch changes (no version bump)
+
+Content-only edits (SKILL.md, persona files, agent prompts):
 
 ```bash
-./scripts/deploy.sh
+./scripts/deploy.sh --verify
 # then in Claude Code:
 /reload-plugins
 ```
 
-To deploy and verify integrity in one step:
+`/reload-plugins` is sufficient — the version path stays the same, CC just re-reads the files.
+
+### Version bump
+
+When bumping the version number, `/reload-plugins` is **not enough** — CC must be restarted:
+
 ```bash
-./scripts/deploy.sh --verify
+# 1. Bump version in .claude-plugin/plugin.json and .claude-plugin/marketplace.json
+# 2. Commit and push
+./scripts/deploy.sh --verify        # sync cache, update checksums + pinned hash
+python3 scripts/bump-registry.py    # update installed_plugins.json to new path
+# 3. Fully restart Claude Code (not just /reload-plugins)
 ```
 
-Or reinstall cleanly from the marketplace:
-```bash
-claude plugin update council && /reload-plugins
-```
-
-If you edited persona files, regenerate checksums before deploying:
-```bash
-./scripts/update-checksums.sh
-# (deploy.sh calls this automatically)
-```
+If you edited persona files, checksums are regenerated automatically by `deploy.sh`.
 
 ## Release process
 
@@ -65,12 +69,12 @@ If you edited persona files, regenerate checksums before deploying:
    ```
    (or edit `~/.claude/plugins/installed_plugins.json` manually: update `installPath`, `version`, `gitCommitSha` for `council@council`)
 5. **Fully restart Claude Code** — `/reload-plugins` alone does NOT switch versions; it only reloads content from the already-registered path
-6. Create a git tag: `git tag v1.x.x && git push --tags`
-6. Users update with:
+6. Create a git tag and push: `git tag v1.x.x && git push --tags`
+7. Users update with:
    ```bash
-   claude plugin marketplace update council
-   claude plugin update council
+   claude plugin update council@council
    ```
+   (the `@council` marketplace suffix is required — `claude plugin update council` fails)
 
 **Never ship a breaking change without bumping the version.** Users have no other signal.
 
@@ -83,12 +87,17 @@ After each release, verify:
 
 If an update breaks things:
 ```bash
-# find the last working tag or commit
+# find the last working tag
 git log --oneline --tags
 
-# roll back the cache manually
-git -C ~/.claude/plugins/cache/council/council/1.2.0 checkout v1.1.0
-/reload-plugins
+# check out the old tag into the working directory
+git checkout v1.x.x
+
+# redeploy and update registry
+./scripts/deploy.sh
+python3 scripts/bump-registry.py
+
+# restart Claude Code
 ```
 
 ## Skill files are the code
