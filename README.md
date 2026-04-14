@@ -37,6 +37,14 @@ When auto-mode is on, Claude will ask "Run technical council before planning? [y
 
 > **Note:** If Claude says "Unknown skill: council", the plugin is not installed or Claude Code was not restarted after installation.
 
+## Updating
+
+```bash
+cd ~/.claude/plugins/council && git pull
+```
+
+Restart Claude Code after pulling.
+
 ## How it works
 
 1. Claude selects the most relevant expert personas for your question
