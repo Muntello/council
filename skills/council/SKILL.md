@@ -43,7 +43,7 @@ If QUESTION is empty after parsing, ask the user: "What would you like the counc
 Find the plugin root: use Glob on `**/personas/checksums.json`, or construct the path from the skill base directory going up two levels (from `skills/council/SKILL.md` → `skills/` → plugin root).
 
 **Pinned manifest hash (updated automatically by scripts/update-checksums.sh — do not edit manually):**
-`sha256:2e63cd7e8c20901d1f3256097cd7eb1f9a7cd70bf88a6b608691a36f51e9ff3d`
+`sha256:0ea32d3e44b78d42d4e9d8003d9f3cefdc5090ae0b74fe61cd0d8f1026067895`
 
 **Integrity check — run for ALL modes:**
 
@@ -153,7 +153,7 @@ Do not omit them silently. Do not fabricate their perspective. Proceed with synt
 
 **Topic:** {one-line summary of QUESTION}
 **Experts convened:** {comma-separated list of persona names}
-**Plugin version:** council v1.2.0
+**Plugin version:** council v{version field from checksums.json}
 
 ### Recommendation
 

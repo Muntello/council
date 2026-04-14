@@ -56,9 +56,12 @@ If you edited persona files, regenerate checksums before deploying:
 ## Release process
 
 1. Make changes, commit, push to `master`
-2. Bump `version` in `.claude-plugin/marketplace.json` and `.claude-plugin/plugin.json`
-3. Create a git tag: `git tag v1.x.x && git push --tags`
-4. Users update with:
+2. Bump `version` in `.claude-plugin/marketplace.json` **and** `.claude-plugin/plugin.json`
+   - The report template in SKILL.md reads version from `checksums.json` automatically — no manual edit needed there
+3. Run `./scripts/deploy.sh` — this regenerates `checksums.json` with the new version, updates the pinned hash in SKILL.md, and syncs the cache
+4. Run `/reload-plugins` in Claude Code
+5. Create a git tag: `git tag v1.x.x && git push --tags`
+6. Users update with:
    ```bash
    claude plugin marketplace update council
    claude plugin update council
@@ -67,7 +70,8 @@ If you edited persona files, regenerate checksums before deploying:
 **Never ship a breaking change without bumping the version.** Users have no other signal.
 
 After each release, verify:
-- [ ] `council --tech <simple question>` produces a full report
+- [ ] `council --verify` shows the new version number
+- [ ] `council --tech <simple question>` produces a full report with the correct version in the header
 - [ ] Auto-mode hook fires correctly before Plan Mode (test after any Claude Code update — this is the only framework coupling point that breaks silently)
 
 ## Rollback

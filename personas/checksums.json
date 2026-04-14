@@ -1,5 +1,5 @@
 {
-  "version": "1.2.0",
+  "version": "1.3.0",
   "algorithm": "sha256",
   "files": {
     "personas/universal.json": "f1081cf750a12598dd6540f0fa1b201cf6da505e3d0c54981fc885d17b369f64",
