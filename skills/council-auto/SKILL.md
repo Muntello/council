@@ -40,8 +40,10 @@ The team is about to plan the following:
 "{QUESTION}"
 
 Give your technical perspective on what could go wrong, what to watch out for, or what the plan should prioritize. Be specific and direct. 150–200 words.
+Do NOT hedge, balance, or soften. Take a position. Avoid: "great question", "certainly", "it's worth noting", "one could argue".
 ```
 
+- If any agent fails, include them as "**{Name}** — did not respond." Do not fabricate their perspective.
 - Present the full Council Report (Voices + Points of Disagreement + Synthesis + Recommendation)
 - Then proceed with EnterPlanMode
 
