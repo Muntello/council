@@ -39,11 +39,20 @@ When auto-mode is on, Claude will ask "Run technical council before planning? [y
 
 ## Updating
 
+**If installed from GitHub** — pull the latest and reinstall:
+
 ```bash
-cd ~/.claude/plugins/council && git pull
+cd /path/to/council && git pull
+claude plugin install --local .
 ```
 
-Restart Claude Code after pulling.
+**If installed locally during development** — reinstall from source:
+
+```bash
+claude plugin install --local /path/to/council
+```
+
+Restart Claude Code after updating.
 
 ## How it works
 
