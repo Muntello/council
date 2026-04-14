@@ -4,20 +4,20 @@ Assemble a council of expert AI personas to analyze any question or decision. Ea
 
 ## Installation
 
-```bash
-claude plugin install Muntello/council
-```
+Council is a plugin — it is **not built into Claude Code** and must be installed manually.
 
-Or manually:
 ```bash
 git clone https://github.com/Muntello/council ~/.claude/plugins/council
 ```
 
 No API keys required. Uses your current Claude Code session.
 
+After installation, restart Claude Code. The `council` skill will appear in your available skills list.
+
 ## Usage
 
-### Explicit council on any topic
+Invoke council by asking Claude to run the skill, or typing in the prompt:
+
 ```
 council Should I use PostgreSQL or MongoDB for this project?
 ```
@@ -34,6 +34,8 @@ council --auto off   # disable
 ```
 
 When auto-mode is on, Claude will ask "Run technical council before planning? [y/N]" before entering Plan Mode.
+
+> **Note:** If Claude says "Unknown skill: council", the plugin is not installed or Claude Code was not restarted after installation.
 
 ## How it works
 
