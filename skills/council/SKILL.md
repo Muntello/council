@@ -42,9 +42,21 @@ If QUESTION is empty after parsing, ask the user: "What would you like the counc
 
 Find the plugin root: use Glob on `**/personas/checksums.json`, or construct the path from the skill base directory going up two levels (from `skills/council/SKILL.md` → `skills/` → plugin root).
 
+**Pinned manifest hash (updated automatically by scripts/update-checksums.sh — do not edit manually):**
+`sha256:2e63cd7e8c20901d1f3256097cd7eb1f9a7cd70bf88a6b608691a36f51e9ff3d`
+
 **Integrity check — run for ALL modes:**
 
-1. Read `{plugin_root}/personas/checksums.json`. If missing, output `⚠ council: checksums.json not found — skipping integrity check.` and continue.
+0. Verify the manifest itself against the pinned hash above:
+   - Run Bash: `shasum -a 256 "{plugin_root}/personas/checksums.json"` and extract the hash.
+   - If it does not match the pinned value → output the following and **STOP**:
+     ```
+     ⚠ Council cannot start: the security manifest has been modified.
+     Run: claude plugin update council
+     (checksums.json hash mismatch)
+     ```
+   - If checksums.json is missing entirely → output `⚠ council: checksums.json not found — skipping integrity check.` and continue.
+1. Read `{plugin_root}/personas/checksums.json`.
 2. Determine which files to check:
    - MODE = VERIFY → both `universal.json` and `technical.json`
    - MODE = TECHNICAL → `technical.json` only
@@ -54,11 +66,9 @@ Find the plugin root: use Glob on `**/personas/checksums.json`, or construct the
    - Match → continue
    - Mismatch → output the following and **STOP**:
      ```
-     ⚠ council: integrity check FAILED for personas/{filename}
-       expected: {expected_hash}
-       got:      {actual_hash}
-     The plugin cache may have been tampered with.
-     Reinstall: claude plugin update council
+     ⚠ Council cannot start: configuration files have been modified.
+     Run: claude plugin update council
+     (personas/{filename} hash mismatch — expected {expected_hash[:16]}..., got {actual_hash[:16]}...)
      ```
 
 **If MODE = VERIFY:**
@@ -66,6 +76,7 @@ After checking all files, output:
 ```
 Council integrity check — v{version from checksums.json}
 
+✓ personas/checksums.json   {hash[:16]}...  (manifest)
 ✓ personas/universal.json   {hash[:16]}...
 ✓ personas/technical.json   {hash[:16]}...
 
